@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>📚 หนังสือต่างถิ่น</title>
+
+    <!-- Google Fonts: Noto Sans Thai + Amiri -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 (ฟรี) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS ของเรา -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ===== NAVIGATION BAR ===== -->
+    <nav id="navbar">
+    <div class="nav-container">
+        <!-- โลโก้ -->
+        <div class="logo" onclick="navigateTo('home')">
+            <i class="fas fa-book-open"></i> หนังสือต่างถิ่น
+        </div>
+
+        <!-- ===== QUICK ACTIONS (มือถือ) ===== -->
+        <div class="quick-actions">
+            <button data-page="books" onclick="navigateTo('books')">
+                <i class="fas  fa-search "></i>
+            </button>
+            <button data-page="cart" onclick="navigateTo('cart')" id="cartNavMobile">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cartBadgeMobile" class="badge">0</span>
+            </button>
+        </div>
+
+        <!-- ===== เมนูหลัก ===== -->
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#" data-page="home" class="active"><i class="fas fa-home"></i> หน้าแรก</a></li>
+            <li><a href="#" data-page="books"><i class="fas fa-list"></i> ทั้งหมด</a></li>
+            <li><a href="#" data-page="categories"><i class="fas fa-tags"></i> หมวดหมู่</a></li>
+            <li><a href="#" data-page="cart" id="cartNav"><i class="fas fa-shopping-cart"></i> ตะกร้า <span id="cartBadge" class="badge">0</span></a></li>
+        </ul>
+
+        <!-- ===== ปุ่มสามจุด ===== -->
+        <div class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+</nav>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main id="mainContent">
+        <!-- หน้าต่างๆ จะถูกเรนเดอร์ที่นี่โดย JavaScript -->
+    </main>
+
+    <!-- ===== TOAST NOTIFICATION ===== -->
+    <div id="toast" class="toast hidden">
+        <span id="toastMessage"></span>
+        <button id="toastClose">&times;</button>
+    </div>
+    
+        <!-- ===== SCRIPT ===== -->
+    <script src="config.js"></script>   <!-- <-- เพิ่มบรรทัดนี้ -->
+    <script src="script.js"></script>
+</body>
+</body>
+</html>
