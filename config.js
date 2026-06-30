@@ -22,7 +22,7 @@ const CONFIG = {
     
     // รูปภาพสำรอง (ถ้าไม่มีให้ใช้ emoji แทน)
     // เปลี่ยน URL นี้เป็นรูปภาพที่คุณต้องการให้แสดงแทน
-    FALLBACK_IMAGE_URL: 'https://i.pinimg.com/control1/1200x/c0/65/d4/c065d4101c0a5ebfab42c862c26f88cc.jpg',
+    FALLBACK_IMAGE_URL: 'https://pngimg.com/uploads/book/book_PNG51093.png',
     
     // หรือถ้าต้องการใช้อิโมจิอย่างเดียว (ไม่ต้องโหลดรูปภาพ)
     USE_EMOJI_FALLBACK: false,   // true = ใช้อิโมจิ, false = ใช้ FALLBACK_IMAGE_URL
