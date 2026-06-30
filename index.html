@@ -5,67 +5,1999 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>📚 หนังสือต่างถิ่น</title>
 
-    <!-- Google Fonts: Noto Sans Thai + Amiri -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome 6 (ฟรี) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- CSS ของเรา -->
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary: #2d5a4b;
+            --primary-light: #4a7c6b;
+            --primary-dark: #1d3d32;
+            --accent: #c49a6c;
+            --accent-light: #dbb88c;
+            --bg: #faf7f0;
+            --bg-card: #ffffff;
+            --text: #2c2c2c;
+            --text-light: #5a5a5a;
+            --border: #e8e0d4;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.10);
+            --radius: 16px;
+            --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --font-thai: 'Noto Sans Thai', sans-serif;
+            --font-arabic: 'Amiri', serif;
+        }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1a1a2e;
+                --bg-card: #16213e;
+                --text: #e8e8e8;
+                --text-light: #a8a8b8;
+                --border: #2a3a5e;
+                --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+                --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4);
+            }
+            #navbar {
+                background: rgba(22, 33, 62, 0.92);
+                backdrop-filter: blur(10px);
+            }
+            .book-card,
+            .detail-container,
+            .filter-bar,
+            .category-item,
+            .footer {
+                background: var(--bg-card);
+            }
+            .detail-code button {
+                background: var(--primary-light);
+            }
+            .detail-code button:hover {
+                background: var(--primary);
+            }
+            .btn-outline {
+                border-color: var(--primary-light);
+                color: var(--primary-light);
+            }
+            .btn-outline:hover {
+                background: var(--primary-light);
+                color: #fff;
+            }
+        }
+
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-thai);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding-top: 70px;
+            padding-bottom: 30px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        ul {
+            list-style: none;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* ===== NAVBAR ===== */
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.3s;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 1.2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .logo i {
+            font-size: 1.3rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            padding: 0.4rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            white-space: nowrap;
+        }
+        .nav-links a i {
+            font-size: 1rem;
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .badge {
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            padding: 0.1rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 0.2rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 30px;
+            transition: background 0.2s;
+            user-select: none;
+            z-index: 1001;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(45, 90, 75, 0.06);
+        }
+
+        .menu-toggle:active {
+            transform: scale(0.92);
+        }
+
+        /* ===== QUICK ACTIONS ===== */
+        .quick-actions {
+            display: none;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .quick-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            color: var(--primary);
+            font-size: 1.2rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 30px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: inherit;
+        }
+
+        .quick-actions button:hover {
+            background: rgba(45, 90, 75, 0.08);
+        }
+
+        .quick-actions button:active {
+            transform: scale(0.92);
+        }
+
+        .quick-actions .badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            padding: 0.1rem 0.4rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+            min-width: 18px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* ===== MOBILE NAV ===== */
+        @media (max-width: 640px) {
+            .quick-actions {
+                display: flex;
+                order: 2;
+            }
+
+            .logo {
+                order: 1;
+                font-size: 1rem;
+            }
+
+            .menu-toggle {
+                display: flex !important;
+                order: 3;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .nav-links {
+                display: none !important;
+                flex-direction: column;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                padding: 0.8rem 1.2rem;
+                gap: 0.2rem;
+                border-bottom: 1px solid var(--border);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+                z-index: 999;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            .nav-links.open {
+                display: flex !important;
+            }
+
+            .nav-links a {
+                padding: 0.8rem 1rem;
+                border-radius: 12px;
+                font-size: 1rem;
+                justify-content: center;
+                color: var(--text-light);
+                background: transparent;
+                white-space: nowrap;
+            }
+
+            .nav-links a i {
+                margin-right: 0.5rem;
+            }
+
+            .nav-links a:hover,
+            .nav-links a.active {
+                background: var(--primary);
+                color: #fff;
+            }
+        }
+
+        /* ===== LAYOUT ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1.6rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title i {
+            color: var(--accent);
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .book-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .book-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .book-card .book-cover {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f0ebe3;
+        }
+
+        .book-card .info {
+            padding: 0.8rem 0.9rem 1rem;
+        }
+        .book-card .title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .book-card .author {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        .book-card .price {
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0.3rem;
+            font-size: 1rem;
+        }
+        .book-card .price .original-price {
+            font-weight: 400;
+            color: var(--text-light);
+            text-decoration: line-through;
+            font-size: 0.8rem;
+            margin-left: 0.4rem;
+        }
+        .book-card .price .discount-badge {
+            background: #e74c3c;
+            color: #fff;
+            font-size: 0.6rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 30px;
+            margin-left: 0.4rem;
+            font-weight: 700;
+        }
+        .book-card .level-tag {
+            display: inline-block;
+            font-size: 0.65rem;
+            background: var(--border);
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+        }
+
+        /* ===== BOOK DETAIL ===== */
+        .detail-container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem 1.2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: background 0.3s;
+        }
+        .detail-cover {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: #f5f0ea;
+            margin-bottom: 1rem;
+        }
+        .detail-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .detail-author {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        .detail-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 0.5rem 0;
+        }
+        .detail-price .original-price {
+            font-weight: 400;
+            color: var(--text-light);
+            text-decoration: line-through;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+        }
+        .detail-price .discount-badge {
+            background: #e74c3c;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            margin-left: 0.5rem;
+        }
+        .detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin: 0.5rem 0 1rem;
+        }
+        .detail-meta span {
+            background: var(--bg);
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+        }
+
+        .detail-description {
+            margin: 1.2rem 0;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        .detail-code {
+            background: var(--bg);
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: monospace;
+            font-size: 1rem;
+            margin: 0.8rem 0;
+            border: 1px dashed var(--border);
+        }
+        .detail-code button {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .detail-code button:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1.2rem 0 0.5rem;
+        }
+        .btn-group .btn {
+            flex: 1 1 auto;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-accent:hover {
+            background: #b0885a;
+        }
+        .btn-danger {
+            background: #c0392b;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #a93226;
+        }
+        .btn-sm {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+        }
+        .btn-pdf {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .btn-pdf:hover {
+            background: #c0392b;
+        }
+
+        /* ===== FILTERS ===== */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            background: var(--bg-card);
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            transition: background 0.3s;
+        }
+        .filter-bar select,
+        .filter-bar input {
+            padding: 0.5rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-family: var(--font-thai);
+            font-size: 0.9rem;
+            flex: 1 1 140px;
+            outline: none;
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+        }
+        .filter-bar select:focus,
+        .filter-bar input:focus {
+            border-color: var(--primary);
+        }
+
+        .book-count {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.8rem;
+        }
+        .book-count strong {
+            color: var(--primary);
+        }
+
+        .load-more-btn {
+            display: block;
+            margin: 1.5rem auto 0;
+            padding: 0.7rem 2rem;
+            background: var(--border);
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text);
+        }
+        .load-more-btn:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* ===== CART ===== */
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+        .cart-item .cart-cover {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f0ebe3;
+        }
+        .cart-item .info {
+            flex: 1;
+        }
+        .cart-item .info .title {
+            font-weight: 600;
+        }
+        .cart-item .info .meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        .cart-item .info .saved {
+            font-size: 0.8rem;
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        .cart-item .qty {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .cart-item .qty button {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text);
+        }
+        .cart-item .qty button:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .cart-item .qty span {
+            min-width: 24px;
+            text-align: center;
+        }
+        .cart-item .remove-btn {
+            background: none;
+            border: none;
+            color: #c0392b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .cart-item .remove-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-total {
+            text-align: right;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 1rem 0;
+            border-top: 2px solid var(--primary);
+            margin-top: 0.5rem;
+        }
+        .cart-total .saved-total {
+            font-size: 0.9rem;
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .cart-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+
+        .btn-cart {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.6rem;
+            border: none;
+            border-radius: 50px;
+            font-family: var(--font-thai);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            flex: 1 1 auto;
+            min-width: 120px;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-cart i {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-cart:hover i {
+            transform: scale(1.1);
+        }
+
+        .btn-cart:active {
+            transform: scale(0.95);
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #2d5a4b, #3d7a63);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(45, 90, 75, 0.25);
+        }
+
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #3d7a63, #2d5a4b);
+            box-shadow: 0 6px 25px rgba(45, 90, 75, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .btn-messenger {
+            background: linear-gradient(135deg, #0084ff, #0073e6);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 132, 255, 0.25);
+        }
+
+        .btn-messenger:hover {
+            background: linear-gradient(135deg, #1a8fff, #0084ff);
+            box-shadow: 0 6px 25px rgba(0, 132, 255, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .btn-clear {
+            background: transparent;
+            color: #c0392b;
+            border: 2px solid #c0392b;
+            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.08);
+        }
+
+        .btn-clear:hover {
+            background: #c0392b;
+            color: #fff;
+            box-shadow: 0 6px 25px rgba(192, 57, 43, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* ===== CATEGORIES ===== */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        .category-item {
+            background: var(--bg-card);
+            padding: 1.2rem 0.8rem;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .category-item:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .category-item .count {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        .category-item:hover .count {
+            color: #e0e0e0;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            margin-top: 3rem;
+            padding: 2rem 1.2rem 1.5rem;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            border-radius: var(--radius) var(--radius) 0 0;
+            transition: background 0.3s;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        .footer-social {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+        .footer-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            color: #fff;
+            text-decoration: none;
+        }
+        .footer-social a:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        .footer-social .facebook {
+            background: #1877f2;
+        }
+        .footer-social .youtube {
+            background: #ff0000;
+        }
+        .footer-social .tv {
+            background: #6c5ce7;
+            font-size: 1.2rem;
+        }
+        .footer-social .tv:hover {
+            background: #5a4bd1;
+        }
+        .footer-text {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2c2c;
+            color: #fff;
+            padding: 0.8rem 1.6rem;
+            border-radius: 40px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 9999;
+            font-size: 0.9rem;
+            max-width: 90%;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .toast.hidden {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+            pointer-events: none;
+        }
+        .toast button {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* ===== SCROLL TO TOP ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(45, 90, 75, 0.3);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .scroll-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 24px rgba(45, 90, 75, 0.4);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (min-width: 641px) {
+            .book-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 1.4rem;
+            }
+            .book-card .book-cover {
+                height: 220px;
+            }
+            .detail-container {
+                padding: 2rem 2.4rem;
+            }
+        }
+
+        @media (min-width: 900px) {
+            .book-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn-cart {
+                flex: 1 1 100%;
+                padding: 0.8rem 1rem;
+                font-size: 0.95rem;
+                border-radius: 80px;
+            }
+            .btn-cart i {
+                font-size: 1.1rem;
+            }
+            .scroll-top {
+                bottom: 70px;
+                right: 16px;
+                width: 42px;
+                height: 42px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ===== UTILITY ===== */
+        .text-center {
+            text-align: center;
+        }
+        .mt-1 {
+            margin-top: 1rem;
+        }
+        .mb-1 {
+            margin-bottom: 1rem;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== ANIMATION ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .book-card {
+            animation: fadeInUp 0.4s ease forwards;
+        }
+        .book-card:nth-child(2) {
+            animation-delay: 0.05s;
+        }
+        .book-card:nth-child(3) {
+            animation-delay: 0.1s;
+        }
+        .book-card:nth-child(4) {
+            animation-delay: 0.15s;
+        }
+        .book-card:nth-child(5) {
+            animation-delay: 0.2s;
+        }
+        .book-card:nth-child(6) {
+            animation-delay: 0.25s;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- ===== NAVIGATION BAR ===== -->
+    <!-- ===== NAVBAR ===== -->
     <nav id="navbar">
-    <div class="nav-container">
-        <!-- โลโก้ -->
-        <div class="logo" onclick="navigateTo('home')">
-            <i class="fas fa-book-open"></i> หนังสือต่างถิ่น
+        <div class="nav-container">
+            <div class="logo" onclick="navigateTo('home')">
+                <i class="fas fa-book-open"></i> หนังสือต่างถิ่น
+            </div>
+
+            <div class="quick-actions">
+                <button data-page="books" onclick="navigateTo('books')">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button data-page="cart" onclick="navigateTo('cart')" id="cartNavMobile">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartBadgeMobile" class="badge">0</span>
+                </button>
+            </div>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#" data-page="home" class="active"><i class="fas fa-home"></i> หน้าแรก</a></li>
+                <li><a href="#" data-page="books"><i class="fas fa-list"></i> ทั้งหมด</a></li>
+                <li><a href="#" data-page="categories"><i class="fas fa-tags"></i> หมวดหมู่</a></li>
+                <li><a href="#" data-page="cart" id="cartNav"><i class="fas fa-shopping-cart"></i> ตะกร้า <span id="cartBadge" class="badge">0</span></a></li>
+            </ul>
+
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
         </div>
+    </nav>
 
-        <!-- ===== QUICK ACTIONS (มือถือ) ===== -->
-        <div class="quick-actions">
-            <button data-page="books" onclick="navigateTo('books')">
-                <i class="fas  fa-search "></i>
-            </button>
-            <button data-page="cart" onclick="navigateTo('cart')" id="cartNavMobile">
-                <i class="fas fa-shopping-cart"></i>
-                <span id="cartBadgeMobile" class="badge">0</span>
-            </button>
+    <!-- ===== MAIN ===== -->
+    <main id="mainContent"></main>
+
+    <!-- ===== SCROLL TO TOP ===== -->
+    <button class="scroll-top" id="scrollTopBtn" aria-label="กลับไปด้านบน">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-social">
+                <a href="https://www.facebook.com/share/1LpiephiHQ/?mibextid=wwXIfr" target="_blank" class="facebook" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://youtube.com/channel/UCKt-fgQJE8aUdAYML01wkMg?si=QnHU0Oyj6Xo_1Fn0" target="_blank" class="youtube" title="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://your-courses-site.com" target="_blank" class="tv" title="คอร์สเรียน">
+                    <i class="fas fa-tv"></i>
+                </a>
+            </div>
+            <p class="footer-text">© 2026 หนังสือต่างถิ่น - ร้านหนังสือออนไลน์</p>
         </div>
+    </footer>
 
-        <!-- ===== เมนูหลัก ===== -->
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#" data-page="home" class="active"><i class="fas fa-home"></i> หน้าแรก</a></li>
-            <li><a href="#" data-page="books"><i class="fas fa-list"></i> ทั้งหมด</a></li>
-            <li><a href="#" data-page="categories"><i class="fas fa-tags"></i> หมวดหมู่</a></li>
-            <li><a href="#" data-page="cart" id="cartNav"><i class="fas fa-shopping-cart"></i> ตะกร้า <span id="cartBadge" class="badge">0</span></a></li>
-        </ul>
-
-        <!-- ===== ปุ่มสามจุด ===== -->
-        <div class="menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
-        </div>
-    </div>
-</nav>
-
-    <!-- ===== MAIN CONTENT ===== -->
-    <main id="mainContent">
-        <!-- หน้าต่างๆ จะถูกเรนเดอร์ที่นี่โดย JavaScript -->
-    </main>
-
-    <!-- ===== TOAST NOTIFICATION ===== -->
+    <!-- ===== TOAST ===== -->
     <div id="toast" class="toast hidden">
         <span id="toastMessage"></span>
         <button id="toastClose">&times;</button>
     </div>
-    
-        <!-- ===== SCRIPT ===== -->
-    <script src="config.js"></script>   <!-- <-- เพิ่มบรรทัดนี้ -->
-    <script src="script.js"></script>
-</body>
+
+    <script>
+        // ============================================================
+        //  CONFIG
+        // ============================================================
+        const CONFIG = {
+            API_URL: 'https://api.sheetbest.com/sheets/d55963b7-5673-4392-98b9-8f1ca80606fb',
+            PAGE_SIZE: 10,
+            MESSENGER_LINK: 'http://m.me/548132778932419',
+            FALLBACK_IMAGE_URL: 'https://i.pinimg.com/control1/1200x/c0/65/d4/c065d4101c0a5ebfab42c862c26f88cc.jpg',
+            USE_EMOJI_FALLBACK: false,
+            FALLBACK_EMOJI: '📖',
+            FALLBACK_BG_COLOR: '#2d5a4b'
+        };
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        const state = {
+            books: [],
+            filteredBooks: [],
+            displayedBooks: [],
+            currentPage: 0,
+            cart: [],
+            currentPageName: 'home',
+            isLoading: false,
+            bookDetailId: null,
+            categoryFilter: 'ทั้งหมด',
+            levelFilter: 'ทั้งหมด',
+            searchQuery: '',
+            searchTimeout: null
+        };
+
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => document.querySelectorAll(sel);
+
+        const main = $('#mainContent');
+        const toast = $('#toast');
+        const toastMsg = $('#toastMessage');
+        const toastClose = $('#toastClose');
+        const cartBadge = $('#cartBadge');
+        const navLinks = $$('.nav-links a');
+        const menuToggle = $('#menuToggle');
+        const navLinksContainer = $('#navLinks');
+        const scrollTopBtn = $('#scrollTopBtn');
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimeout = null;
+
+        function showToast(message, duration = 3000) {
+            toastMsg.textContent = message;
+            toast.classList.remove('hidden');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, duration);
+        }
+
+        toastClose.addEventListener('click', () => {
+            toast.classList.add('hidden');
+            clearTimeout(toastTimeout);
+        });
+
+        // ============================================================
+        //  SCROLL TO TOP
+        // ============================================================
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ============================================================
+        //  FETCH BOOKS
+        // ============================================================
+        async function fetchBooksFromSheet() {
+            try {
+                const url = CONFIG.API_URL;
+                console.log('📡 กำลังดึงข้อมูลจาก:', url);
+
+                const response = await fetch(url, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const books = await response.json();
+
+                if (!books || books.length === 0) {
+                    throw new Error('ไม่มีข้อมูลในชีต');
+                }
+
+                console.log('✅ ดึงข้อมูลสำเร็จ:', books.length, 'เล่ม');
+
+                return books.map(book => ({
+                    ...book,
+                    price: parseFloat(book.price) || 0,
+                    original_price: parseFloat(book.original_price) || 0,
+                    sales_count: parseInt(book.sales_count) || 0,
+                    search_count: parseInt(book.search_count) || 0,
+                    is_featured: book.is_featured === 'TRUE' || book.is_featured === 'true',
+                    pdf_link: book.pdf_link || ''
+                }));
+
+            } catch (error) {
+                console.error('❌ ดึงข้อมูลล้มเหลว:', error);
+                showToast('⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูล ใช้ข้อมูลสำรอง');
+                return getFallbackBooks();
+            }
+        }
+
+        function getFallbackBooks() {
+            return [{
+                book_id: '001',
+                title: 'หลักอิสลามเบื้องต้น',
+                author: 'อ.สมชาย',
+                category: 'อะกีดะฮ์',
+                level: 'เริ่มต้น',
+                price: 120,
+                original_price: 150,
+                description: 'หนังสืออธิบายพื้นฐานอิสลามสำหรับผู้เริ่มต้น',
+                table_of_contents: 'บทที่ 1: ...',
+                cover_image: '',
+                book_code: 'ISL-001',
+                sales_count: 50,
+                search_count: 30,
+                is_featured: true,
+                facebook_link: 'https://www.facebook.com/share/1F9EwWi7du/',
+                pdf_link: ''
+            }];
+        }
+
+        // ============================================================
+        //  CART
+        // ============================================================
+        function loadCartFromStorage() {
+            try {
+                const saved = localStorage.getItem('nangsue_cart');
+                if (saved) {
+                    state.cart = JSON.parse(saved);
+                }
+            } catch (e) {
+                state.cart = [];
+            }
+            updateCartBadge();
+        }
+
+        function saveCartToStorage() {
+            localStorage.setItem('nangsue_cart', JSON.stringify(state.cart));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const total = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cartBadge');
+            if (badge) badge.textContent = total;
+            const badgeMobile = document.getElementById('cartBadgeMobile');
+            if (badgeMobile) badgeMobile.textContent = total;
+        }
+
+        function getDiscount(book) {
+            if (book.original_price && book.original_price > book.price) {
+                return Math.round(((book.original_price - book.price) / book.original_price) * 100);
+            }
+            return 0;
+        }
+
+        function getSavedAmount(book, qty = 1) {
+            if (book.original_price && book.original_price > book.price) {
+                return (book.original_price - book.price) * qty;
+            }
+            return 0;
+        }
+
+        function addToCart(book) {
+            const existing = state.cart.find(item => item.book.book_id === book.book_id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                state.cart.push({ book, quantity: 1 });
+            }
+            saveCartToStorage();
+            const saved = getSavedAmount(book);
+            if (saved > 0) {
+                showToast(`✅ เพิ่ม "${book.title}" ลงตะกร้า (ประหยัด ${saved.toLocaleString()} ฿)`);
+            } else {
+                showToast(`✅ เพิ่ม "${book.title}" ลงตะกร้าแล้ว`);
+            }
+            renderCurrentPage();
+        }
+
+        function removeFromCart(bookId) {
+            const index = state.cart.findIndex(item => item.book.book_id === bookId);
+            if (index === -1) return;
+            if (state.cart[index].quantity > 1) {
+                state.cart[index].quantity -= 1;
+            } else {
+                state.cart.splice(index, 1);
+            }
+            saveCartToStorage();
+            showToast('🗑️ อัปเดตตะกร้าแล้ว');
+            renderCurrentPage();
+        }
+
+        function removeAllFromCart(bookId) {
+            state.cart = state.cart.filter(item => item.book.book_id !== bookId);
+            saveCartToStorage();
+            showToast('🗑️ ลบรายการเรียบร้อย');
+            renderCurrentPage();
+        }
+
+        function clearCart() {
+            if (state.cart.length === 0) {
+                showToast('ตะกร้าว่างแล้ว');
+                return;
+            }
+            state.cart = [];
+            saveCartToStorage();
+            showToast('🗑️ ล้างตะกร้าเรียบร้อย');
+            renderCurrentPage();
+        }
+
+        function copyCartForMessenger() {
+            if (state.cart.length === 0) {
+                showToast('⚠️ ตะกร้าว่าง ไม่มีรายการให้คัดลอก');
+                return;
+            }
+
+            let totalPrice = 0;
+            let totalOriginal = 0;
+            let lines = [];
+            lines.push('📚 *ฉันสนใจหนังสือเหล่านี้*');
+            lines.push('');
+
+            state.cart.forEach((item, idx) => {
+                const b = item.book;
+                const price = b.price || 0;
+                const original = b.original_price || 0;
+                const subtotal = price * item.quantity;
+                const originalSubtotal = original * item.quantity;
+                totalPrice += subtotal;
+                totalOriginal += originalSubtotal;
+                const saved = originalSubtotal - subtotal;
+                const discount = getDiscount(b);
+
+                lines.push(`${idx+1}. ${b.title}`);
+                lines.push(`   รหัส: ${b.book_code || '-'}`);
+                lines.push(`   ราคา: ${price.toLocaleString()} บาท × ${item.quantity} = ${subtotal.toLocaleString()} บาท`);
+                if (original > price) {
+                    lines.push(`   🔥 ประหยัด: ${saved.toLocaleString()} บาท (${discount}%)`);
+                }
+                lines.push('');
+            });
+
+            lines.push(`💰 *รวมทั้งหมด: ${totalPrice.toLocaleString()} บาท*`);
+            if (totalOriginal > totalPrice) {
+                const totalSaved = totalOriginal - totalPrice;
+                lines.push(`💚 *ประหยัดรวม: ${totalSaved.toLocaleString()} บาท*`);
+            }
+            lines.push('');
+            lines.push('สามารถสอบถามเพิ่มเติมได้เลยค่ะ 🙏');
+
+            const text = lines.join('\n');
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 คัดลอกรายการเรียบร้อย! ไปที่ Messenger เพื่อวาง');
+            }).catch(() => {
+                prompt('คัดลอกข้อความนี้ (กด Ctrl+C):', text);
+                showToast('📋 คัดลอกสำเร็จ (ใช้ prompt)');
+            });
+        }
+
+        function openMessenger() {
+            window.open(CONFIG.MESSENGER_LINK, '_blank');
+        }
+
+        // ============================================================
+        //  FILTER
+        // ============================================================
+        function filterBooks() {
+            const category = state.categoryFilter;
+            const level = state.levelFilter;
+            const query = state.searchQuery.trim().toLowerCase();
+
+            let filtered = state.books.filter(book => {
+                if (category !== 'ทั้งหมด' && book.category !== category) return false;
+                if (level !== 'ทั้งหมด' && book.level !== level) return false;
+                if (query) {
+                    const inTitle = book.title.toLowerCase().includes(query);
+                    const inAuthor = book.author.toLowerCase().includes(query);
+                    const inCategory = book.category.toLowerCase().includes(query);
+                    if (!(inTitle || inAuthor || inCategory)) return false;
+                }
+                return true;
+            });
+
+            state.filteredBooks = filtered;
+            state.currentPage = 0;
+            return filtered;
+        }
+
+        function loadMoreBooks() {
+            if (state.isLoading) return;
+            if (state.filteredBooks.length === 0) return;
+
+            const start = state.currentPage * CONFIG.PAGE_SIZE;
+            const end = start + CONFIG.PAGE_SIZE;
+            const nextBatch = state.filteredBooks.slice(start, end);
+
+            if (nextBatch.length === 0) {
+                showToast('📖 แสดงหนังสือทั้งหมดแล้ว');
+                return;
+            }
+
+            state.displayedBooks = [...state.displayedBooks, ...nextBatch];
+            state.currentPage += 1;
+
+            updateBookGridAndCount();
+        }
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderCurrentPage() {
+            switch (state.currentPageName) {
+                case 'home':
+                    renderHome();
+                    break;
+                case 'books':
+                    renderAllBooks();
+                    break;
+                case 'book-detail':
+                    renderBookDetail();
+                    break;
+                case 'cart':
+                    renderCart();
+                    break;
+                case 'categories':
+                    renderCategories();
+                    break;
+                default:
+                    renderHome();
+            }
+            updateActiveNav(state.currentPageName);
+        }
+
+        function updateActiveNav(page) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === page) {
+                    link.classList.add('active');
+                }
+            });
+            navLinksContainer.classList.remove('open');
+        }
+
+        // -------- Book Card --------
+        function renderBookCard(book) {
+            const cover = book.cover_image || '';
+            const title = book.title || 'หนังสือ';
+            const discount = getDiscount(book);
+            const hasDiscount = discount > 0;
+
+            return `
+                <div class="book-card" onclick="navigateTo('book-detail', '${book.book_id}')">
+                    <img src="${cover || CONFIG.FALLBACK_IMAGE_URL}" alt="${title}" class="book-cover" 
+                         onerror="this.src='${CONFIG.FALLBACK_IMAGE_URL}'">
+                    <div class="info">
+                        <div class="title">${book.title}</div>
+                        <div class="author">${book.author || 'ไม่ระบุ'}</div>
+                        <div class="price">
+                            ${book.price ? book.price.toLocaleString() : 0} ฿
+                            ${hasDiscount ? `<span class="original-price">${book.original_price.toLocaleString()} ฿</span>
+                                           <span class="discount-badge">-${discount}%</span>` : ''}
+                        </div>
+                        ${book.level ? `<span class="level-tag">${book.level}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // -------- Book Section --------
+        function renderBookSection(title, books) {
+            if (!books || books.length === 0) {
+                return `
+                    <div class="section-title">${title}</div>
+                    <p style="color: var(--text-light); padding: 1rem 0;">暂无ข้อมูล</p>
+                `;
+            }
+
+            const cards = books.map(book => renderBookCard(book)).join('');
+            return `
+                <div class="section-title">${title}</div>
+                <div class="book-grid">${cards}</div>
+            `;
+        }
+
+        // -------- Home --------
+        function renderHome() {
+            const featured = state.books.filter(b => b.is_featured).slice(0, 6);
+            const bestSellers = [...state.books]
+                .sort((a, b) => (b.sales_count || 0) - (a.sales_count || 0))
+                .slice(0, 6);
+            const mostSearched = [...state.books]
+                .sort((a, b) => (b.search_count || 0) - (a.search_count || 0))
+                .slice(0, 4);
+
+            const html = `
+                <div class="container">
+                    <div class="hero" style="
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        color: #fff;
+                        padding: 1.8rem 1.5rem;
+                        border-radius: var(--radius);
+                        margin: 1rem 0 1.5rem;
+                    ">
+                        <h1 style="font-size: 1.6rem; margin-bottom: 0.3rem;">📖 หนังสือต่างถิ่น</h1>
+                        <p style="opacity: 0.9;">ร้านหนังสือออนไลน์สำหรับทุกคน</p>
+                        <div style="margin-top: 0.8rem;">
+                            <button class="btn btn-accent" onclick="navigateTo('books')" style="background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 0.5rem 1.2rem; border-radius: 30px; cursor: pointer; font-family: inherit; font-size: 0.9rem;">
+                                ดูหนังสือทั้งหมด →
+                            </button>
+                        </div>
+                    </div>
+
+                    ${renderBookSection('🌟 หนังสือแนะนำ', featured)}
+                    ${renderBookSection('🔥 ขายดีที่สุด', bestSellers)}
+                    ${renderBookSection('🔍 ค้นหามากที่สุด', mostSearched)}
+                </div>
+            `;
+            main.innerHTML = html;
+        }
+
+        // -------- Book Detail --------
+        function renderBookDetail() {
+            const bookId = state.bookDetailId;
+            const book = state.books.find(b => b.book_id === bookId);
+
+            if (!book) {
+                main.innerHTML = `<div class="container"><p style="text-align:center;padding:2rem;">❌ ไม่พบหนังสือ</p></div>`;
+                return;
+            }
+
+            const discount = getDiscount(book);
+            const hasDiscount = discount > 0;
+            const pdfLink = book.pdf_link || '';
+            const saved = getSavedAmount(book);
+
+            const html = `
+                <div class="container">
+                    <button class="btn btn-outline btn-sm" onclick="navigateTo('books')" style="margin:0.5rem 0 1rem;">
+                        <i class="fas fa-arrow-left"></i> กลับ
+                    </button>
+                    <div class="detail-container">
+                        <img src="${book.cover_image || CONFIG.FALLBACK_IMAGE_URL}" alt="${book.title}" class="detail-cover"
+                             onerror="this.src='${CONFIG.FALLBACK_IMAGE_URL}'">
+
+                        <h1 class="detail-title">${book.title}</h1>
+                        <div class="detail-author">✍️ ${book.author || 'ไม่ระบุ'}</div>
+
+                        <div class="detail-price">
+                            ${book.price ? book.price.toLocaleString() : 0} ฿
+                            ${hasDiscount ? `
+                                <span class="original-price">${book.original_price.toLocaleString()} ฿</span>
+                                <span class="discount-badge">ประหยัด ${saved.toLocaleString()} ฿ (${discount}%)</span>
+                            ` : ''}
+                        </div>
+
+                        <div class="detail-meta">
+                            <span>📂 ${book.category || 'ไม่ระบุ'}</span>
+                            <span>📊 ${book.level || 'ไม่ระบุ'}</span>
+                        </div>
+
+                        <div class="detail-description">${book.description || 'ไม่มีคำอธิบาย'}</div>
+
+                        ${book.table_of_contents ? `<div><strong>📑 สารบัญ</strong><pre style="white-space:pre-wrap;background:var(--bg);padding:0.8rem;border-radius:12px;">${book.table_of_contents}</pre></div>` : ''}
+
+                        <div class="detail-code">
+                            <span><i class="fas fa-hashtag"></i> รหัสหนังสือ: <strong>${book.book_code || '-'}</strong></span>
+                            <button onclick="copyBookCode('${book.book_code || ''}')"><i class="far fa-copy"></i> คัดลอก</button>
+                        </div>
+
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="addToCartFromDetail('${book.book_id}')">
+                                <i class="fas fa-cart-plus"></i> หยิบใส่ตะกร้า
+                            </button>
+                            ${pdfLink ? `<button class="btn btn-pdf" onclick="window.open('${pdfLink}', '_blank')">
+                                <i class="fas fa-file-pdf"></i> ดูตัวอย่าง
+                            </button>` : ''}
+                            <button class="btn btn-accent" onclick="copyBookInfo('${book.book_id}')">
+                                <i class="fas fa-share-alt"></i> คัดลอกข้อมูล
+                            </button>
+                            <button class="btn btn-outline" onclick="openMessenger()">
+                                <i class="fab fa-facebook-messenger"></i> สอบถามผ่านเพจ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            main.innerHTML = html;
+        }
+
+        function copyBookCode(code) {
+            if (!code) {
+                showToast('⚠️ ไม่มีรหัสหนังสือ');
+                return;
+            }
+            navigator.clipboard.writeText(code).then(() => {
+                showToast(`📋 คัดลอกรหัส "${code}" เรียบร้อย`);
+            }).catch(() => {
+                prompt('คัดลอกรหัส:', code);
+                showToast('📋 คัดลอกแล้ว');
+            });
+        }
+
+        function copyBookInfo(bookId) {
+            const book = state.books.find(b => b.book_id === bookId);
+            if (!book) return;
+
+            const discount = getDiscount(book);
+            const saved = getSavedAmount(book);
+            let lines = [];
+            lines.push(`📖 ฉันสนใจหนังสือเล่มนี้`);
+            lines.push(``);
+            lines.push(`ชื่อ: ${book.title}`);
+            lines.push(`ผู้แต่ง: ${book.author || '-'}`);
+            lines.push(`ราคา: ${book.price ? book.price.toLocaleString() : 0} ฿`);
+            if (discount > 0) {
+                lines.push(`ราคาปกติ: ${book.original_price.toLocaleString()} ฿ (ประหยัด ${saved.toLocaleString()} ฿ หรือ ${discount}%)`);
+            }
+            lines.push(`ระดับ: ${book.level || '-'}`);
+            lines.push(`รหัส: ${book.book_code || '-'}`);
+
+            const text = lines.join('\n');
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 คัดลอกข้อมูลเรียบร้อย');
+            }).catch(() => {
+                prompt('คัดลอกข้อมูล:', text);
+                showToast('📋 คัดลอกแล้ว');
+            });
+        }
+
+        function addToCartFromDetail(bookId) {
+            const book = state.books.find(b => b.book_id === bookId);
+            if (book) {
+                addToCart(book);
+            }
+        }
+
+        // -------- All Books --------
+        function renderAllBooks() {
+            const filtered = state.filteredBooks;
+            const displayed = state.displayedBooks;
+            const total = filtered.length;
+
+            const filterHtml = `
+                <div class="filter-bar" id="filterBar">
+                    <select id="categoryFilter" onchange="applyFilters()">
+                        <option value="ทั้งหมด">📂 หมวดทั้งหมด</option>
+                        ${getCategoryOptions(state.categoryFilter)}
+                    </select>
+                    <select id="levelFilter" onchange="applyFilters()">
+                        <option value="ทั้งหมด">📊 ระดับทั้งหมด</option>
+                        <option value="เริ่มต้น">เริ่มต้น</option>
+                        <option value="ปานกลาง">ปานกลาง</option>
+                        <option value="ยาก">ยาก</option>
+                    </select>
+                    <input type="text" id="searchInput" placeholder="🔍 ค้นหา..." value="${state.searchQuery}" oninput="handleSearchInput(this.value)">
+                </div>
+                <div class="book-count" id="bookCount">พบ <strong>${total}</strong> รายการ</div>
+            `;
+
+            let bookGridHtml = '';
+            if (displayed.length === 0) {
+                bookGridHtml = `<p style="text-align:center;padding:2rem;">ไม่พบหนังสือที่ตรงกับเงื่อนไข</p>`;
+            } else {
+                bookGridHtml = `<div class="book-grid" id="bookGrid">${displayed.map(book => renderBookCard(book)).join('')}</div>`;
+            }
+
+            const loadMoreBtn = (displayed.length < total) ? `
+                <button class="load-more-btn" onclick="loadMoreBooks()" id="loadMoreBtn">
+                    <i class="fas fa-chevron-down"></i> โหลดเพิ่ม
+                </button>
+            ` : (total > 0 ? `<p style="text-align:center;color:var(--text-light);">✅ แสดงทั้งหมด ${total} เล่ม</p>` : '');
+
+            const html = `
+                <div class="container">
+                    <h2 class="section-title"><i class="fas fa-book"></i> รายการหนังสือทั้งหมด</h2>
+                    ${filterHtml}
+                    ${bookGridHtml}
+                    ${loadMoreBtn}
+                </div>
+            `;
+
+            main.innerHTML = html;
+
+            const catSelect = document.getElementById('categoryFilter');
+            const levelSelect = document.getElementById('levelFilter');
+            if (catSelect) catSelect.value = state.categoryFilter;
+            if (levelSelect) levelSelect.value = state.levelFilter;
+        }
+
+        function getCategoryOptions(selected) {
+            const categories = ['อะกีดะฮ์', 'ฟิกฮ์', 'อูโซล ลุลฟิกฮ์', 'หะดีษ', 'ตัฟซีร', 'ภาษา', 'ซีเราะฮ์', 'ตรรกะ', 'อื่นๆ'];
+            return categories.map(cat =>
+                `<option value="${cat}" ${selected === cat ? 'selected' : ''}>${cat}</option>`
+            ).join('');
+        }
+
+        function applyFilters() {
+            const catSelect = document.getElementById('categoryFilter');
+            const levelSelect = document.getElementById('levelFilter');
+            const searchInput = document.getElementById('searchInput');
+
+            state.categoryFilter = catSelect ? catSelect.value : 'ทั้งหมด';
+            state.levelFilter = levelSelect ? levelSelect.value : 'ทั้งหมด';
+            state.searchQuery = searchInput ? searchInput.value : '';
+
+            filterBooks();
+            state.displayedBooks = state.filteredBooks.slice(0, CONFIG.PAGE_SIZE);
+            state.currentPage = 1;
+            renderAllBooks();
+        }
+
+        // Debounce search
+        function handleSearchInput(value) {
+            clearTimeout(state.searchTimeout);
+            state.searchTimeout = setTimeout(() => {
+                state.searchQuery = value;
+                filterBooks();
+                state.displayedBooks = state.filteredBooks.slice(0, CONFIG.PAGE_SIZE);
+                state.currentPage = 1;
+                updateBookGridAndCount();
+            }, 300);
+        }
+
+        function updateBookGridAndCount() {
+            const filtered = state.filteredBooks;
+            const displayed = state.displayedBooks;
+            const total = filtered.length;
+
+            const countEl = document.getElementById('bookCount');
+            if (countEl) {
+                countEl.innerHTML = `พบ <strong>${total}</strong> รายการ`;
+            }
+
+            const gridEl = document.getElementById('bookGrid');
+            if (gridEl) {
+                if (displayed.length === 0) {
+                    gridEl.innerHTML = `<p style="text-align:center;padding:2rem;">ไม่พบหนังสือที่ตรงกับเงื่อนไข</p>`;
+                } else {
+                    gridEl.innerHTML = displayed.map(book => renderBookCard(book)).join('');
+                }
+            }
+
+            const loadMoreBtn = document.querySelector('.load-more-btn');
+            if (loadMoreBtn) {
+                if (displayed.length >= total) {
+                    loadMoreBtn.remove();
+                    const parent = loadMoreBtn.parentNode;
+                    if (parent && total > 0) {
+                        const doneMsg = document.createElement('p');
+                        doneMsg.style.cssText = 'text-align:center;color:var(--text-light);';
+                        doneMsg.textContent = `✅ แสดงทั้งหมด ${total} เล่ม`;
+                        parent.appendChild(doneMsg);
+                    }
+                }
+            }
+        }
+
+        // -------- Cart --------
+        function renderCart() {
+            const items = state.cart;
+            if (items.length === 0) {
+                main.innerHTML = `
+                    <div class="container" style="text-align:center;padding:3rem 1rem;">
+                        <i class="fas fa-shopping-cart" style="font-size:3rem;color:var(--border);"></i>
+                        <h3 style="margin-top:0.5rem;">ตะกร้าว่าง</h3>
+                        <p style="color:var(--text-light);">เพิ่มหนังสือจากหน้ารายการหรือหน้าแรก</p>
+                        <button class="btn btn-primary" onclick="navigateTo('books')" style="margin-top:1rem;">เลือกหนังสือ</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let totalPrice = 0;
+            let totalOriginal = 0;
+            const itemsHtml = items.map(item => {
+                const b = item.book;
+                const price = b.price || 0;
+                const original = b.original_price || 0;
+                const subtotal = price * item.quantity;
+                const originalSubtotal = original * item.quantity;
+                totalPrice += subtotal;
+                totalOriginal += originalSubtotal;
+                const saved = originalSubtotal - subtotal;
+                const discount = getDiscount(b);
+
+                return `
+                    <div class="cart-item">
+                        <img src="${b.cover_image || CONFIG.FALLBACK_IMAGE_URL}" alt="${b.title}" class="cart-cover"
+                             onerror="this.src='${CONFIG.FALLBACK_IMAGE_URL}'">
+                        <div class="info">
+                            <div class="title">${b.title}</div>
+                            <div class="meta">${b.author || ''} • ${b.book_code || ''}</div>
+                            <div class="meta">${price.toLocaleString()} ฿ × ${item.quantity} = ${subtotal.toLocaleString()} ฿</div>
+                            ${saved > 0 ? `<div class="saved">💚 ประหยัด ${saved.toLocaleString()} ฿ (${discount}%)</div>` : ''}
+                        </div>
+                        <div class="qty">
+                            <button onclick="removeFromCart('${b.book_id}')">−</button>
+                            <span>${item.quantity}</span>
+                            <button onclick="addToCartFromDetail('${b.book_id}')">+</button>
+                        </div>
+                        <button class="remove-btn" onclick="removeAllFromCart('${b.book_id}')"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+            }).join('');
+
+            const totalSaved = totalOriginal - totalPrice;
+
+            const html = `
+                <div class="container">
+                    <h2 class="section-title"><i class="fas fa-shopping-cart"></i> ตะกร้าของฉัน</h2>
+                    ${itemsHtml}
+                    <div class="cart-total">
+                        💰 รวมทั้งสิ้น: <span style="color:var(--primary-dark);">${totalPrice.toLocaleString()} ฿</span>
+                        ${totalSaved > 0 ? `<br><span class="saved-total">💚 ประหยัดรวม ${totalSaved.toLocaleString()} ฿</span>` : ''}
+                    </div>
+                    <div class="cart-actions">
+                        <button class="btn-cart btn-copy" onclick="copyCartForMessenger()"><i class="far fa-copy"></i> คัดลอกรายการ</button>
+                        <button class="btn-cart btn-messenger" onclick="openMessenger()"><i class="fab fa-facebook-messenger"></i> ไปที่ Messenger</button>
+                        <button class="btn-cart btn-clear" onclick="clearCart()"><i class="fas fa-trash-alt"></i> ล้างตะกร้า</button>
+                    </div>
+                </div>
+            `;
+            main.innerHTML = html;
+        }
+
+        // -------- Categories --------
+        function renderCategories() {
+            const categories = ['อะกีดะฮ์', 'ฟิกฮ์', 'อูโซล ลุลฟิกฮ์', 'หะดีษ', 'ตัฟซีร', 'ภาษา', 'ซีเราะฮ์', 'ตรรกะ', 'อื่นๆ'];
+
+            const countMap = {};
+            state.books.forEach(book => {
+                const cat = book.category || 'อื่นๆ';
+                countMap[cat] = (countMap[cat] || 0) + 1;
+            });
+
+            const itemsHtml = categories.map(cat => {
+                const count = countMap[cat] || 0;
+                return `
+                    <div class="category-item" onclick="navigateToCategory('${cat}')">
+                        <div style="font-size:1.4rem;">📂</div>
+                        <div style="font-weight:600;">${cat}</div>
+                        <div class="count">${count} เล่ม</div>
+                    </div>
+                `;
+            }).join('');
+
+            const html = `
+                <div class="container">
+                    <h2 class="section-title"><i class="fas fa-tags"></i> หมวดหมู่หนังสือ</h2>
+                    <div class="category-grid">${itemsHtml}</div>
+                </div>
+            `;
+            main.innerHTML = html;
+        }
+
+        function navigateToCategory(category) {
+            state.categoryFilter = category;
+            state.levelFilter = 'ทั้งหมด';
+            state.searchQuery = '';
+            filterBooks();
+            state.displayedBooks = state.filteredBooks.slice(0, CONFIG.PAGE_SIZE);
+            state.currentPage = 1;
+            state.currentPageName = 'books';
+            renderAllBooks();
+            updateActiveNav('books');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        function navigateTo(page, param = null) {
+            state.currentPageName = page;
+            if (page === 'book-detail' && param) {
+                state.bookDetailId = param;
+                window.location.hash = `#book-detail?book_id=${param}`;
+            } else if (page === 'home') {
+                window.location.hash = '#home';
+            } else if (page === 'books') {
+                window.location.hash = '#books';
+            } else if (page === 'cart') {
+                window.location.hash = '#cart';
+            } else if (page === 'categories') {
+                window.location.hash = '#categories';
+            } else {
+                window.location.hash = '#home';
+            }
+            renderCurrentPage();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.addEventListener('hashchange', handleHashChange);
+
+        function handleHashChange() {
+            const hash = window.location.hash.slice(1) || 'home';
+            if (hash === 'home') {
+                state.currentPageName = 'home';
+                renderHome();
+                updateActiveNav('home');
+            } else if (hash === 'books') {
+                state.currentPageName = 'books';
+                if (state.filteredBooks.length === 0 || state.displayedBooks.length === 0) {
+                    filterBooks();
+                    state.displayedBooks = state.filteredBooks.slice(0, CONFIG.PAGE_SIZE);
+                    state.currentPage = 1;
+                }
+                renderAllBooks();
+                updateActiveNav('books');
+            } else if (hash === 'cart') {
+                state.currentPageName = 'cart';
+                renderCart();
+                updateActiveNav('cart');
+            } else if (hash === 'categories') {
+                state.currentPageName = 'categories';
+                renderCategories();
+                updateActiveNav('categories');
+            } else if (hash.startsWith('book-detail')) {
+                const params = new URLSearchParams(hash.split('?')[1]);
+                const bookId = params.get('book_id');
+                if (bookId) {
+                    state.currentPageName = 'book-detail';
+                    state.bookDetailId = bookId;
+                    renderBookDetail();
+                    updateActiveNav('book-detail');
+                } else {
+                    navigateTo('home');
+                }
+            } else {
+                navigateTo('home');
+            }
+        }
+
+        // ============================================================
+        //  EVENT LISTENERS
+        // ============================================================
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.dataset.page;
+                if (page) {
+                    navigateTo(page);
+                }
+            });
+        });
+
+        menuToggle.addEventListener('click', () => {
+            navLinksContainer.classList.toggle('open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#navbar')) {
+                navLinksContainer.classList.remove('open');
+            }
+        });
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        async function init() {
+            showToast('⏳ กำลังโหลดข้อมูล...', 2000);
+
+            loadCartFromStorage();
+
+            const books = await fetchBooksFromSheet();
+            state.books = books;
+
+            state.categoryFilter = 'ทั้งหมด';
+            state.levelFilter = 'ทั้งหมด';
+            state.searchQuery = '';
+            filterBooks();
+            state.displayedBooks = state.filteredBooks.slice(0, CONFIG.PAGE_SIZE);
+            state.currentPage = 1;
+
+            if (window.location.hash) {
+                handleHashChange();
+            } else {
+                navigateTo('home');
+            }
+
+            showToast('✅ พร้อมใช้งาน!', 1500);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+
 </body>
 </html>
